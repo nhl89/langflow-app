@@ -1,8 +1,3 @@
-# Optional FastAPI app for visibility — not needed for Langflow but won't hurt.
-from fastapi import FastAPI
+from langflow import create_app
 
-app = FastAPI()
-
-@app.get("/")
-def read_root():
-    return {"message": "Langflow is ready"}
+app = create_app()
