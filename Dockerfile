@@ -1,18 +1,23 @@
+# Use Python 3.10 slim image
 FROM python:3.10-slim
 
-# System deps
-RUN apt-get update && apt-get install -y git build-essential
-
-# Install pip packages
-COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir -r /app/requirements.txt
-
-# Copy app
-COPY app /app/app
+# Set working directory
 WORKDIR /app
 
-# Expose port
+# Copy only requirements first to install dependencies separately (cache)
+COPY requirements.txt .
+
+# Upgrade pip
+RUN pip install --upgrade pip
+
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the app code
+COPY . .
+
+# Expose default HF Spaces port
 EXPOSE 7860
 
-# Start Langflow
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "7860"]
+# Run app
+CMD ["python", "app.py"]
